@@ -62,21 +62,56 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    <profiles>
+        <profile>
+            <id>noBuildImage</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>build-image</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
+                    <image>
+                        <name>docker.io/sergzubenko/${project.artifactId}:${project.version}</name>
+                        <builder>paketobuildpacks/builder:full</builder>
+                        <buildpacks>
+                            <buildpack>paketo-buildpacks/java</buildpack>
+                        </buildpacks>
+                        <env>
+                            <BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
+                            <BP_MAVEN_ACTIVE_PROFILES>imageBuild</BP_MAVEN_ACTIVE_PROFILES>
+                        </env>
+                    </image>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>build-image</id>
+                        <goals>
+                            <goal>build-image-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
         </plugins>
     </build>
 

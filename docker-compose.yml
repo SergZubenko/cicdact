@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  mysql:
+    container_name: hillow
+    image: sergzubenko/cicdact:0.0.1-SNAPSHOT
+    ports:
+      - "21001:21001"

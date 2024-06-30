@@ -35,7 +35,7 @@ jobs:
 
     # Build Docker image
     - name: Build Docker image
-      run: docker build -t username/myapp:${{ github.sha }} .
+      run: mvn spring-boot:build-image
 
     # Log in to DockerHub
     - name: Log in to Docker Hub
@@ -46,4 +46,4 @@ jobs:
 
     # Push image to DockerHub
     - name: Push image to Docker Hub
-      run: docker push username/myapp:${{ github.sha }}
+      run: docker push sergzubenko/cicdact:${{ github.sha }}
