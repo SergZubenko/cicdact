@@ -44,6 +44,9 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: Set latest tag
+      run: docker tag sergzubenko/cicdact:0.0.1-SNAPSHOT sergzubenko/cicdact:${{ github.sha }}
+
     # Push image to DockerHub
     - name: Push image to Docker Hub
       run: docker push sergzubenko/cicdact:${{ github.sha }}
