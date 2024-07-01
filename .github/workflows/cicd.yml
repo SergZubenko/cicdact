@@ -31,7 +31,7 @@ jobs:
 
     # Run tests
     - name: Run tests
-      run: mvn test
+      run: mvn clean install
 
     - name: Extract version
       id: set_variables
