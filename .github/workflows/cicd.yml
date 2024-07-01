@@ -34,11 +34,13 @@ jobs:
       run: mvn test
 
     - name: Extract version
-      id: get_version
+      id: set_variables
       run: |
         echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
         echo "ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
         echo "JAR_NAME=$(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout)" >> $GITHUB_ENV
+        echo "DOCKER_GROUP=sergzubenko" >> $GITHUB_ENV
+        
 
     - name: Build and Push Docker Image
       run: |
