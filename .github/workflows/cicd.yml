@@ -33,20 +33,19 @@ jobs:
     - name: Run tests
       run: mvn test
 
-    # Build Docker image
-    - name: Build Docker image
-      run: mvn spring-boot:build-image
+    - name: Extract version
+      id: get_version
+      run: |
+        echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
+        echo "ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
+        echo "JAR_NAME=$(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout)" >> $GITHUB_ENV
 
-    # Log in to DockerHub
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Set latest tag
-      run: docker tag sergzubenko/cicdact:0.0.1-SNAPSHOT sergzubenko/cicdact:${{ github.sha }}
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t  ${{ secrets.DOCKER_USERNAME }}/$ARTIFACT_ID:$PROJECT_VERSION -t${{ secrets.DOCKER_USERNAME }}/$ARTIFACT_ID:$PROJECT_VERSION${{ github.sha }} -t  ${{ secrets.DOCKER_USERNAME }}/$ARTIFACT_ID:latest --build-arg JAR_FILE=JAR_NAME .
+        docker push ${{ secrets.DOCKER_USERNAME }}/$ARTIFACT_ID:$PROJECT_VERSION
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Push image to DockerHub
-    - name: Push image to Docker Hub
-      run: docker push sergzubenko/cicdact:${{ github.sha }}
