@@ -9,6 +9,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      DOCKER_GROUP: sergzubenko
 
     steps:
     - uses: actions/checkout@v3
@@ -31,20 +33,17 @@ jobs:
 
     # Run tests
     - name: Run tests
-      run: mvn clean install
+      run: mvn test
 
     - name: Extract version
       id: set_variables
       run: |
         echo "PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
         echo "ARTIFACT_ID=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
-        echo "JAR_NAME=$(mvn help:evaluate -Dexpression=project.build.finalName -q -DforceStdout).jar" >> $GITHUB_ENV
-        echo "DOCKER_GROUP=sergzubenko" >> $GITHUB_ENV
-        
 
     - name: Build and Push Docker Image
       run: |
-        docker build -t   $DOCKER_GROUP/$ARTIFACT_ID:$PROJECT_VERSION -t  $DOCKER_GROUP/$ARTIFACT_ID:latest --build-arg JAR_FILE=$JAR_NAME .
+        docker build -t $DOCKER_GROUP/$ARTIFACT_ID:$PROJECT_VERSION -t  $DOCKER_GROUP/$ARTIFACT_ID:latest .
         docker push  $DOCKER_GROUP/$ARTIFACT_ID:$PROJECT_VERSION
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
