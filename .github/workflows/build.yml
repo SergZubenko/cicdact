@@ -1,4 +1,4 @@
-name: Java CI/CD
+name: Java Check Build
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - "main"
 
 jobs:
-  build-and-deploy:
+  build-test:
     runs-on: ubuntu-latest
 
     steps:
