@@ -5,7 +5,7 @@ WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-# Build the application without running tests to speed up the build
+# Build the application without running tests to speed up the build.yml
 RUN mvn clean package -DskipTests
 
 # Stage 2: Create the runtime image
